@@ -1,0 +1,14 @@
+.page {
+  min-height: 100dvh;
+  width: 100dvw;
+  background: #242424;
+}
+
+
+.content {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(24rem, 24rem));
+  grid-auto-columns: auto;
+  padding:  4rem;
+  padding-top: 10rem;
+}
