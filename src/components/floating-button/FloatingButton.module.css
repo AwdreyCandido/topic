@@ -7,6 +7,8 @@
   align-items: center;
   justify-content: space-between;
   position: absolute;
+  background-color: #f1f1f1;
+  color: #323232;
   right: 50%;
   transform: translateX(50%);
   top: 3%;

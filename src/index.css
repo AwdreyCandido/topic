@@ -5,46 +5,75 @@
 *,
 *::after,
 *::before {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
 }
 
 html {
-    font-size: 62.5%;
-    scroll-behavior: smooth;
+  font-size: 62.5%;
+  scroll-behavior: smooth;
 
-    font-family: "JetBrains Mono", serif;
-    font-optical-sizing: auto;
-    font-style: normal;
-    color: #f1f1f1;
+  font-family: "JetBrains Mono", serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+  color: #f1f1f1;
 }
 
 body {
-    /* height: 100dvh;
+  /* height: 100dvh;
     width: 100dvw; */
-    font-size: 1.6rem;
-    overflow-x: hidden;
+  font-size: 1.6rem;
+  overflow: hidden;
 }
 
 /* ANIMATIONS */
 
 @keyframes pop-in {
-    0% {
-        transform: scale(0);
-        opacity: 0;
-    }
-    60% {
-        transform: scale(1.1);
-        opacity: 1;
-    }
-    100% {
-        transform: scale(1);
-    }
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes expand {
+  0% {
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    top: var(--initial-top);
+    left: var(--initial-left);
+    width: var(--initial-width);
+    height: var(--initial-height);
+    z-index: 100;
+
+  }
+  100% {
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    max-width: 100dvw;
+    width: 100dvw;
+    height: 100dvh;
+    z-index: 100;
+  }
 }
 
 .pop-in {
-    animation: pop-in 0.6s ease-out forwards;
+  animation: pop-in 0.4s ease-out forwards;
+}
+.expand {
+  animation: expand 0.3s ease-in forwards;
+  overflow: hidden;
 }

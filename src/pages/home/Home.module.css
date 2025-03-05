@@ -9,6 +9,7 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(24rem, 24rem));
   grid-auto-columns: auto;
+  justify-content: space-around;
   padding:  4rem;
   padding-top: 10rem;
 }

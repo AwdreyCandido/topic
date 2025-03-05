@@ -14,12 +14,38 @@
   color: #323232;
   font-weight: 700;
   cursor: pointer;
-  transition: box-shadow 0.3s ease;
+  transition: box-shadow 0.3s ease, top 0.3s ease, left 0.3s ease;
 
   &:hover {
     box-shadow: none;
   }
 
+}
+
+/* .expand {
+  height: 100dvh;
+  width: 100dvw;
+  background: #f1f1f1;
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: #323232;
+  z-index: 100;
+  transition: all 0.4s ease-in-out;
+} */
+
+
+
+.expand {
+  position: absolute;
+  top: 0;
+  left: 0;
+  /* width: 100vw;
+  height: 100vh; */
+  z-index: 100;
+  background: #f1f1f1;
+  color: #323232;
+  transition: width 0.6s ease-in;
 }
 
 .title {
@@ -39,7 +65,7 @@
   border-radius: 100%;
 }
 
-.addIcon {
+.dashedIcon {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -96,4 +122,36 @@
   &:hover {
     background-color: #cccccc93;
   }
+}
+
+
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 2.5rem;
+  gap: 2rem;
+  padding: 1rem 2rem;
+  border-bottom: 1px solid #ccc;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  font-size: 1.2rem;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  font-weight: normal;
+
+  h2 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    line-height: 1.1;
+  }
+}
+
+.navActions{
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
