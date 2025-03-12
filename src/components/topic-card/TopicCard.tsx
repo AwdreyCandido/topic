@@ -6,10 +6,17 @@ import {
 } from "react-icons/hi2";
 import styles from "./TopicCard.module.css";
 import { useRef, useState } from "react";
+import Card from "../card/Card";
 
 const TopicCard = () => {
   const [expand, setExpand] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
+
+  const [cardList, setCardList] = useState([]);
+
+  const handleNewTopic = () => {
+    setCardList((prev) => [prev.length + 1, ...prev]);
+  };
 
   const handleExpand = () => {
     const rect = cardRef.current.getBoundingClientRect();
@@ -54,7 +61,7 @@ const TopicCard = () => {
           </div>
         </div>
       ) : (
-        <div className="duration-300">
+        <div className={styles.topicPage}>
           <div className={styles.navbar}>
             <div className="flex gap-10">
               <div className={styles.info}>
@@ -73,7 +80,7 @@ const TopicCard = () => {
               <div onClick={handleExpand} className={styles.dashedIcon}>
                 <HiMiniXMark />
               </div>
-              <div className={styles.dashedIcon}>
+              <div onClick={handleNewTopic} className={styles.dashedIcon}>
                 <HiMiniPlus />
               </div>
               <div className={styles.dashedIcon}>
@@ -81,6 +88,11 @@ const TopicCard = () => {
               </div>
             </div>
           </div>
+          <section className={styles.topicContainer}>
+            {cardList.map((item) => {
+              return <Card key={item} />;
+            })}
+          </section>
         </div>
       )}
     </div>
