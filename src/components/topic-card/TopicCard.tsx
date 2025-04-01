@@ -7,9 +7,18 @@ import {
 import styles from "./TopicCard.module.css";
 import { useRef, useState } from "react";
 import Card from "../card/Card";
+import CardSummary from "../card-summary/CardSummary";
+import { Flashcard, Topic } from "../../data/models/types";
+import ExpandedCard from "../expanded-card/ExpandedCard";
 
-const TopicCard = () => {
+interface TopicCardProps {
+  topic: Topic;
+  quantity?: number;
+}
+
+const TopicCard: React.FC<TopicCardProps> = ({ quantity, topic }) => {
   const [expand, setExpand] = useState(false);
+  const [expandCard, setExpandCard] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
 
   const [cardList, setCardList] = useState([]);
@@ -18,9 +27,10 @@ const TopicCard = () => {
     setCardList((prev) => [prev.length + 1, ...prev]);
   };
 
+  
+
   const handleExpand = () => {
     const rect = cardRef.current.getBoundingClientRect();
-    // console.log(rect.top, rect.left, rect.width, rect.height);
     cardRef.current?.style.setProperty("--initial-top", `${rect.top}px`);
     cardRef.current?.style.setProperty("--initial-left", `${rect.left}px`);
     cardRef.current?.style.setProperty("--initial-width", `${rect.width}px`);
@@ -33,15 +43,12 @@ const TopicCard = () => {
     <div
       ref={cardRef}
       className={`${styles.card} pop-in ${expand ? "expand" : "pop-in"}`}
-      // className={`${expand ? styles.expand : styles.card} ${
-      //   expand ? "expand" : "pop-in"
-      // }`}
     >
       {!expand ? (
         <div onClick={handleExpand}>
           <div>
             <div className={styles.title}>
-              <p>Topic Card</p>
+              <p>{topic.name}</p>
               <div className={styles.options}>
                 <HiEllipsisVertical />
               </div>
@@ -50,50 +57,20 @@ const TopicCard = () => {
               <div className={styles.icon}>
                 <HiMiniFolder />
               </div>
-              <p>Empty</p>
+              <p>{quantity ? `${quantity} Cards` : "Empty"}</p>
             </div>
           </div>
           <div className={styles.actionContainer}>
             <div className={styles.dashedIcon}>
               <HiMiniPlus />
             </div>
-            <p>Last updated at: 01/04/2025</p>
+            <p>
+              Last updated at: {`${new Date(topic.updatedAt!).toLocaleDateString()}`}
+            </p>
           </div>
         </div>
       ) : (
-        <div className={styles.topicPage}>
-          <div className={styles.navbar}>
-            <div className="flex gap-10">
-              <div className={styles.info}>
-                <h2>Topic Card</h2>
-                <p>Last updated at: 01/04/2025</p>
-              </div>
-
-              <div className={styles.iconContainer}>
-                <div className={styles.icon}>
-                  <HiMiniFolder />
-                </div>
-                <p>Empty</p>
-              </div>
-            </div>
-            <div className={styles.navActions}>
-              <div onClick={handleExpand} className={styles.dashedIcon}>
-                <HiMiniXMark />
-              </div>
-              <div onClick={handleNewTopic} className={styles.dashedIcon}>
-                <HiMiniPlus />
-              </div>
-              <div className={styles.dashedIcon}>
-                <HiEllipsisVertical />
-              </div>
-            </div>
-          </div>
-          <section className={styles.topicContainer}>
-            {cardList.map((item) => {
-              return <Card key={item} />;
-            })}
-          </section>
-        </div>
+        <ExpandedCard topic={topic} handleClose={handleExpand} />
       )}
     </div>
   );

@@ -1,24 +1,28 @@
 import { useState } from "react";
 import FloatingButton from "../../components/floating-button/FloatingButton";
 import TopicCard from "../../components/topic-card/TopicCard";
-import Topic from "../../components/topic/Topic";
 import styles from "./Home.module.css";
+import { sampleDeck } from "../../data/data";
 
 const Home = () => {
-  const [cardList, setCardList] = useState([]);
+  const [topicList, setTopicList] = useState(sampleDeck);
 
   const handleNewTopic = () => {
-    setCardList((prev) => [prev.length + 1,...prev]);
+    // setCardList((prev) => [prev.length + 1,...prev]);
   };
 
   return (
     <div className={styles.page}>
       <FloatingButton onClick={handleNewTopic} />
       {/* Home */}
-        {/* <Topic /> */}
+      {/* <Topic /> */}
       <div className={styles.content}>
-        {cardList.map((item) => {
-          return <TopicCard key={item} />;
+        {topicList.map((item) => {
+          return (
+            <div>
+              <TopicCard topic={item} quantity={item.flashcards.length} />
+            </div>
+          );
         })}
       </div>
     </div>

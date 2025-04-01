@@ -1,8 +1,9 @@
 .card {
-  width: 24rem;
-  height: 24rem;
-  margin: 1rem auto;
-  gap: 1rem;
+  /* width: 24rem; */
+  /* margin: 1rem auto; */
+  /* gap: 1rem; */
+  height: min-content;
+  max-width: 25rem;
   background: #f1f1f1;
   border-radius: 0.8rem;
   padding: 1rem;
