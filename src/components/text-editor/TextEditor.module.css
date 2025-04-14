@@ -1,0 +1,30 @@
+*,
+*::after,
+*::before {
+  &:focus {
+    border: none;
+    outline: none;
+  }
+}
+
+.editorContainer {
+  color: #333333;
+  /* background-color: #eaeaea; */
+  max-width: 70rem;
+  height: 100%;
+  border: 1px solid #c9c9c9;
+}
+
+.actionBar {
+  padding: 1rem;
+  border-bottom: 1px solid #c9c9c9;
+}
+
+.editor {
+  padding: 1rem;
+
+  &:focus {
+    border: none;
+    outline: none;
+  }
+}

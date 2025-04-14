@@ -39,14 +39,14 @@ const CardSummary: React.FC<CardSummaryProps> = ({ selectedCard, selectedTopicId
         >
           <HiMiniXMark className="text-[2rem]" />
         </div>
-        <div className="flex items-end gap-2 pb-8 border-b-[1px] border-b-black-5">
+        <div className="flex items-center gap-2 pb-8 border-b-[1px] border-b-black-5">
           <HiOutlineDocumentText className="text-[2.8rem] stroke-[1.4] text-primary" />
           <h3 className="text-[1.6rem] font-medium leading-tight">
             {selected?.question}
           </h3>
         </div>
         <div className="pb-12 mt-12 text-dark border-b-[1px] border-b-black-5">
-          <div className="flex flex-col gap-2 mb-4">
+          <div contentEditable="true" className="flex flex-col gap-2 mb-4">
             <p className="text-[1.4rem] font-bold text-primary">
               {selected?.answer}
             </p>
