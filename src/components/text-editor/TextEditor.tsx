@@ -16,54 +16,79 @@ const TextEditor = () => {
   const [selectedLine, setSelectedLine] = useState<any>(0);
   const [content, setContent] = useState<any>([
     {
+      id: 1,
       type: "paragraph",
       content: "First line",
       element: "p",
     },
     {
+      id: 2,
+      type: "heading",
+      content: "Second line",
+      element: "h1",
+    },
+    {
+      id: 3,
       type: "paragraph",
-      content: "13/04/2025",
+      content: "Third line",
       element: "p",
     },
     {
+      id: 4,
       type: "paragraph",
-      content: "14/04/2025",
+      content: "Fourth line",
       element: "p",
     },
     {
-      type: "paragraph",
-      content: "15/04/2025",
-      element: "p",
+      id: 5,
+      type: "small",
+      content: "Fourth line",
+      element: "small",
     },
   ]);
 
   const lineRefs = useRef<(HTMLElement | null)[]>([]);
 
+  useEffect(() => {
+    lineRefs.current = lineRefs.current.slice(0, content.length);
+  }, [content.length]);
+
+  function handleSelectRow(index: number) {
+    // console.log(index);
+    setSelectedLine(index);
+  }
+
   function handleEditContent(index: number, cntn?: string) {
-    const text = lineRefs.current[index]?.textContent;
+    const text = lineRefs.current[index]?.innerText;
     console.log(text);
 
-    const line = content[index];
-    const edited = { ...line, content: text };
-    const newContent = content[index] = edited
+    const updatedLine = { ...content[index], content: text };
+    const updatedContent = [...content];
 
-    setContent(newContent)
-
+    updatedContent[index] = updatedLine;
+    console.log(content, updatedContent);
+    setContent(updatedContent);
   }
 
   function handleAddLine(e: React.KeyboardEvent, key: string) {
+    const nextLine = selectedLine + 1;
+
+    console.log({ currentLine: selectedLine, nextLine });
+
     if (key === "Enter") {
       e.preventDefault();
 
       if (selectedLine >= 0) {
-
         setContent((prev) => {
           const newContent = [...prev];
-          newContent.splice(selectedLine + 1, 0, {
+          newContent.splice(nextLine, 0, {
+            id: newContent.length,
             type: "paragraph",
-            content: "awdrey",
+            content: "",
             element: "p",
           });
+
+          console.log(newContent);
           return newContent;
         });
 
@@ -72,14 +97,55 @@ const TextEditor = () => {
     }
   }
 
-  function handleCopy(e: React.ClipboardEvent) {
+  function handlePaste(e: React.ClipboardEvent) {
     e.preventDefault();
-    const selection = window.getSelection();
-    if (selection) {
-      const plainText = selection.toString();
-      e.clipboardData.setData("text/plain", plainText);
+
+    const html = e.clipboardData.getData("text/html");
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, "text/html");
+    console.log(doc);
+
+    const parsed = doc.querySelectorAll("[data-block-id]");
+    if (parsed.length > 0) {
+      parsed.forEach((el) => {
+        const blockId = el.getAttribute("data-block-id");
+        const blockType = el.getAttribute("data-content-type");
+        const blockElement = el.getAttribute("data-content-element");
+        const blockContent = el.innerHTML;
+
+        const newBlock = {
+          id: content.length + 1,
+          type: blockType,
+          content: blockContent,
+          element: blockElement,
+        };
+
+        console.log(newBlock);
+      });
+    } else {
+
+      const text = e.clipboardData.getData("text/plain");
+      const selection = window.getSelection()?.getRangeAt(0);
+      const el = selection?.startContainer.parentElement;
+
+      if (el) {
+        const blockId = el.getAttribute("data-block-id");
+        const blockType = el.getAttribute("data-content-type");
+        const blockElement = el.getAttribute("data-content-element");
+        const blockContent = text;
+
+        const newBlock = {
+          id: content.length + 1,
+          type: blockType,
+          content: blockContent,
+          element: blockElement,
+        };
+
+        console.log(newBlock);
+      }
     }
   }
+
 
   return (
     <div className={styles.editorContainer}>
@@ -131,34 +197,51 @@ const TextEditor = () => {
           <FaRedo />
         </button>
       </div>
-      <div
-        onCopy={handleCopy}
-        onKeyDown={(e) => handleAddLine(e, e.key)}
-        contentEditable="true"
-        suppressContentEditableWarning
-        onInput={(e) => handleEditContent(selectedLine)}
-        role="textbox"
-        className={styles.editor}
-      >
-        {content.map((item, index) => {
-          const Element = item.element as keyof JSX.IntrinsicElements;
-          const isLast = index == content.lenght - 1 ? 0 : 1;
+      <div>
+        <div
+          onPaste={handlePaste}
+          onKeyDown={(e) => handleAddLine(e, e.key)}
+          contentEditable="true"
+          suppressContentEditableWarning
+          onInput={(e) => handleEditContent(selectedLine)}
+          role="textbox"
+          className={styles.editor}
+        >
+          {content.map((item, index) => {
+            const Element = item.element as keyof JSX.IntrinsicElements;
+            const isLast = index == content.lenght - 1 ? 0 : 1;
 
-          return (
-            <Element
-              key={index}
-              className="min-h-[2.2rem] bg-slate-50 my-1"
-              ref={(el) => (lineRefs.current[index] = el)}
-              onClick={() => setSelectedLine(index)}
-            >
-              {item.content}
-            </Element>
-          );
-        })}
+            return (
+              <div key={index} data-block-type="outer-block">
+                <div data-block-type="container-block">
+                  <div
+                    data-block-type="content-block"
+                    data-content-type={item.type}
+                    data-content-element={item.element}
+                  >
+                    <Element
+                      className="min-h-[2.2rem] bg-blue-300 my-1"
+                      ref={(el) => (lineRefs.current[index] = el)}
+                      onClick={() => handleSelectRow(index)}
+                      data-block-id={item.id}
+                      data-content-type={item.type}
+                      data-content-element={item.element}
+                    >
+                      {item.content}
+                    </Element>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
       </div>
       <div className="flex gap-8">
-        <button title="Lalala">Lalala</button>
-        <button onClick={() => console.log(content)} title="Print">
+        <button
+          className="px-8 py-3 bg-slate-400 rounded-xl"
+          onClick={() => console.log(content)}
+          title="Print"
+        >
           Print
         </button>
       </div>
