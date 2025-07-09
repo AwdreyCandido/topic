@@ -1,15 +1,9 @@
-import {
-  HiEllipsisVertical,
-  HiMiniFolder,
-  HiMiniPlus,
-  HiMiniXMark,
-} from "react-icons/hi2";
+import { HiEllipsisVertical, HiMiniFolder, HiMiniPlus } from "react-icons/hi2";
 import styles from "./TopicCard.module.css";
 import { useRef, useState } from "react";
-import Card from "../card/Card";
-import CardSummary from "../card-summary/CardSummary";
-import { Flashcard, Topic } from "../../data/models/types";
+import { Topic } from "../../data/models/types";
 import ExpandedCard from "../expanded-card/ExpandedCard";
+import { useCardContext } from "../../data/contexts/CardsContext";
 
 interface TopicCardProps {
   topic: Topic;
@@ -20,17 +14,10 @@ const TopicCard: React.FC<TopicCardProps> = ({ quantity, topic }) => {
   const [expand, setExpand] = useState(false);
   const [expandCard, setExpandCard] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
-
-  const [cardList, setCardList] = useState([]);
-
-  const handleNewTopic = () => {
-    setCardList((prev) => [prev.length + 1, ...prev]);
-  };
-
-  
+  const { handleSetSelectedTopic } = useCardContext();
 
   const handleExpand = () => {
-    const rect = cardRef.current.getBoundingClientRect();
+    const rect = cardRef.current!.getBoundingClientRect();
     cardRef.current?.style.setProperty("--initial-top", `${rect.top}px`);
     cardRef.current?.style.setProperty("--initial-left", `${rect.left}px`);
     cardRef.current?.style.setProperty("--initial-width", `${rect.width}px`);
@@ -45,7 +32,12 @@ const TopicCard: React.FC<TopicCardProps> = ({ quantity, topic }) => {
       className={`${styles.card} pop-in ${expand ? "expand" : "pop-in"}`}
     >
       {!expand ? (
-        <div onClick={handleExpand}>
+        <div
+          onClick={() => {
+            handleSetSelectedTopic(topic.id);
+            handleExpand();
+          }}
+        >
           <div>
             <div className={styles.title}>
               <p>{topic.name}</p>
@@ -65,12 +57,13 @@ const TopicCard: React.FC<TopicCardProps> = ({ quantity, topic }) => {
               <HiMiniPlus />
             </div>
             <p>
-              Last updated at: {`${new Date(topic.updatedAt!).toLocaleDateString()}`}
+              Last updated at:{" "}
+              {`${new Date(topic.updatedAt!).toLocaleDateString()}`}
             </p>
           </div>
         </div>
       ) : (
-        <ExpandedCard topic={topic} handleClose={handleExpand} />
+        <ExpandedCard handleClose={handleExpand} />
       )}
     </div>
   );

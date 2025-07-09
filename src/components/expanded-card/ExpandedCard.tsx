@@ -5,35 +5,42 @@ import {
   HiMiniXMark,
 } from "react-icons/hi2";
 import styles from "./ExpandedCard.module.css";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import Card from "../card/Card";
 import CardSummary from "../card-summary/CardSummary";
-import { Topic } from "../../data/models/types";
 import { useCardContext } from "../../data/contexts/CardsContext";
 
 interface ExpandedCardProps {
-  topic: Topic;
+  // topic: Topic;
   handleClose: () => void;
 }
 
-const ExpandedCard: React.FC<ExpandedCardProps> = ({ handleClose, topic }) => {
-  // const [selectedCardId, setselectedCardId] = useState<number | null>(null);
-
-  const [cardList, setCardList] = useState(topic.flashcards);
-  const { selectCard, selectedCardId } = useCardContext();
+const ExpandedCard: React.FC<ExpandedCardProps> = ({ handleClose }) => {
+  const { selectCard, selectedCardId, handleSetCardList, selectedTopic } =
+    useCardContext();
 
   const handleNewTopic = () => {
-    setCardList((prev) => [prev.length + 1, ...prev]);
+    handleSetCardList([
+      ...selectedTopic.flashcards,
+      {
+        id: 1 + Math.random(),
+        question: "What is this lalala?",
+        answer:
+          "Lalala is a type of lalala lalala lalaaaaaaaaaaa lalalala  lalalal  lalalal  lallaalala",
+        deckId: selectedTopic.id,
+        createdAt: new Date("2025-04-01T12:00:00Z"),
+        updatedAt: new Date("2025-04-01T12:00:00Z"),
+      },
+    ]);
   };
 
   useEffect(() => {
-    console.log('rerender...')
-  }, [])
-  
+    console.log("rerender...");
+  }, []);
 
   const handleSelectCard = (id: number) => {
     // setselectedCardId(id);
-    selectCard(id)
+    selectCard(id);
   };
 
   return (
@@ -42,10 +49,10 @@ const ExpandedCard: React.FC<ExpandedCardProps> = ({ handleClose, topic }) => {
         <div className={styles.navbar}>
           <div className="flex gap-10">
             <div className={styles.info}>
-              <h2>{topic.name}</h2>
+              <h2>{selectedTopic.name}</h2>
               <p>
                 Last updated at:{" "}
-                {`${new Date(topic.updatedAt!).toLocaleDateString()}`}
+                {`${new Date(selectedTopic.updatedAt!).toLocaleDateString()}`}
               </p>
             </div>
 
@@ -54,8 +61,8 @@ const ExpandedCard: React.FC<ExpandedCardProps> = ({ handleClose, topic }) => {
                 <HiMiniFolder />
               </div>
               <p>
-                {topic.flashcards.length
-                  ? `${topic.flashcards.length} Cards`
+                {selectedTopic.flashcards.length
+                  ? `${selectedTopic.flashcards.length} Cards`
                   : "Empty"}
               </p>
             </div>
@@ -74,7 +81,7 @@ const ExpandedCard: React.FC<ExpandedCardProps> = ({ handleClose, topic }) => {
         </div>
         <section className={styles.topicContainer}>
           <div className={styles.cardsContainer}>
-            {cardList.map((item) => {
+            {selectedTopic.flashcards.map((item) => {
               return (
                 <Card
                   flashcard={item}
@@ -87,7 +94,12 @@ const ExpandedCard: React.FC<ExpandedCardProps> = ({ handleClose, topic }) => {
         </section>
       </div>
 
-      {selectedCardId && <CardSummary selectedCard={selectedCardId} selectedTopicId={topic.id} />}
+      {selectedCardId && (
+        <CardSummary
+          selectedCard={selectedCardId}
+          selectedTopicId={selectedTopic.id}
+        />
+      )}
     </div>
   );
 };

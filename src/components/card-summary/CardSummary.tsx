@@ -1,8 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { HiOutlineDocumentText } from "react-icons/hi2";
-import { HiOutlineChartBar } from "react-icons/hi2";
-import { HiOutlineUser } from "react-icons/hi2";
-import { HiOutlineGlobeAmericas } from "react-icons/hi2";
 import { HiMiniXMark } from "react-icons/hi2";
 import { useCardContext } from "../../data/contexts/CardsContext";
 
@@ -13,10 +10,10 @@ interface CardSummaryProps {
 
 const CardSummary: React.FC<CardSummaryProps> = ({ selectedCard, selectedTopicId }) => {
   const [card, setCard] = useState<any | null>(null);
-  const { selectedCardId, cardList, selectCard } = useCardContext();
+  const { selectedCardId, deckList, selectCard, selectedTopic } = useCardContext();
 
-  const topic = cardList.find((item) => item.id === selectedTopicId);
-  const selected = topic?.flashcards.find((card) => card.id === selectedCardId);
+  // const topic = deckList.find((item) => item.id === selectedTopicId);
+  const selected = selectedTopic?.flashcards.find((card) => card.id === selectedCardId);
 
 
 

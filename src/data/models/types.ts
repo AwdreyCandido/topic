@@ -2,7 +2,7 @@ export interface Flashcard {
   id: number;
   question: string;
   answer: string;
-  deckId: string;
+  deckId: number;
   createdAt: Date;
   updatedAt: Date;
 }
