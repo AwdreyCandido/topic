@@ -2,7 +2,11 @@
   /* width: 24rem; */
   /* margin: 1rem auto; */
   /* gap: 1rem; */
-  height: min-content;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 10rem;
+  width: 25rem;
   max-width: 25rem;
   background: #f1f1f1;
   border-radius: 0.8rem;

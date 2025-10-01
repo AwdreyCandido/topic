@@ -5,10 +5,11 @@ import {
   HiMiniXMark,
 } from "react-icons/hi2";
 import styles from "./ExpandedCard.module.css";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Card from "../card/Card";
 import CardSummary from "../card-summary/CardSummary";
 import { useCardContext } from "../../data/contexts/CardsContext";
+import CreateCard from "../forms/create-card/CreateCard";
 
 interface ExpandedCardProps {
   // topic: Topic;
@@ -16,6 +17,7 @@ interface ExpandedCardProps {
 }
 
 const ExpandedCard: React.FC<ExpandedCardProps> = ({ handleClose }) => {
+  const [isCreateCard, setIsCreateCard] = useState(false)
   const { selectCard, selectedCardId, handleSetCardList, selectedTopic } =
     useCardContext();
 
@@ -42,6 +44,10 @@ const ExpandedCard: React.FC<ExpandedCardProps> = ({ handleClose }) => {
     // setselectedCardId(id);
     selectCard(id);
   };
+
+  const handleCreateCardModal = () => {
+    setIsCreateCard(!isCreateCard);
+  }
 
   return (
     <div className="flex">
@@ -71,7 +77,7 @@ const ExpandedCard: React.FC<ExpandedCardProps> = ({ handleClose }) => {
             <div onClick={handleClose} className={styles.dashedIcon}>
               <HiMiniXMark />
             </div>
-            <div onClick={handleNewTopic} className={styles.dashedIcon}>
+            <div onClick={handleCreateCardModal} className={styles.dashedIcon}>
               <HiMiniPlus />
             </div>
             <div className={styles.dashedIcon}>
@@ -100,6 +106,8 @@ const ExpandedCard: React.FC<ExpandedCardProps> = ({ handleClose }) => {
           selectedTopicId={selectedTopic.id}
         />
       )}
+
+      {isCreateCard && <CreateCard/>}
     </div>
   );
 };

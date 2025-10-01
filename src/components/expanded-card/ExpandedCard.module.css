@@ -84,11 +84,15 @@
 }
 
 .cardsContainer {
-  display: flex;
+  display: grid;
+  grid-auto-columns: auto;
+  grid-template-columns: repeat(auto-fit, minmax(24rem, 1fr));
+  background: red;
+  width: 100%;
+  /* display: flex;
   flex-wrap: wrap;
-  justify-content: space-evenly;
+  justify-content: space-evenly; */
   /* width: 100%; */
-  /* background: red; */
   gap: 2rem;
 }
 
@@ -117,7 +121,7 @@
   gap: 2rem;
   padding: 1rem 2rem;
   border-bottom: 1px solid #c7c7c7;
-  box-shadow: 0px 10px 8px 10px rgba(0, 0, 0, 0.15);
+  /* box-shadow: 0px 10px 8px 10px rgba(0, 0, 0, 0.15); */
 }
 
 .info {
