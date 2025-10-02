@@ -3,11 +3,11 @@ import React from "react";
 interface TextInputProps {
   id: string;
   name: string;
-  type?: string;
-  label: string;
-  placeholder?: string;
-  value: string;
+  value: string; 
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  type?: string;
+  label?: string;
+  placeholder?: string;
   className?: string;
   style?: React.CSSProperties;
 }
@@ -41,7 +41,7 @@ const TextInput: React.FC<TextInputProps> = ({
         value={value}
         onChange={onChange}
         style={style}
-        className={`w-full px-3 py-[0.8rem] text-base rounded-xl border border-neutral-400 focus:outline-none `}
+        className={`w-full px-3 py-[0.8rem] text-base rounded-xl border border-neutral-400 font-medium focus:outline-none placeholder:font-normal`}
       />
     </div>
   );

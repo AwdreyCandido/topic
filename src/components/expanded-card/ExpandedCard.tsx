@@ -107,7 +107,7 @@ const ExpandedCard: React.FC<ExpandedCardProps> = ({ handleClose }) => {
         />
       )}
 
-      {isCreateCard && <CreateCard/>}
+      {isCreateCard && <CreateCard onClose={handleCreateCardModal}/>}
     </div>
   );
 };
