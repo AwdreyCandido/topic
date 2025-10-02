@@ -50,7 +50,7 @@ const ExpandedCard: React.FC<ExpandedCardProps> = ({ handleClose }) => {
   }
 
   return (
-    <div className="flex">
+    <div className="flex max-h-[100vh]">
       <div className={styles.topicPage}>
         <div className={styles.navbar}>
           <div className="flex gap-10">

@@ -62,18 +62,21 @@
   margin-top: 0.5rem;
   font-weight: normal;
 
-  & > p {
+  &>p {
     margin-left: 0.2rem;
   }
 }
 
 .topicPage {
   width: 100dvw;
-  height: 100dvh;
+  height: 100dvw;
+  max-height: 100vh;
 }
 
 .topicContainer {
-  padding:  4rem 2rem;
+  container-type: inline-size;
+  container-name: cards;
+  padding: 4rem 2rem;
   padding-bottom: 10rem;
   background: #292929;
   height: 100%;
@@ -85,14 +88,15 @@
 
 .cardsContainer {
   display: grid;
-  grid-auto-columns: auto;
-  grid-template-columns: repeat(auto-fit, minmax(24rem, 1fr));
-  width: 100%;
-  /* display: flex;
-  flex-wrap: wrap;
-  justify-content: space-evenly; */
-  /* width: 100%; */
+  grid-template-columns: repeat(auto-fit, minmax(24rem, 24rem));
   gap: 2rem;
+  width: 100%;
+}
+
+@container cards (width < 100rem) {
+  .cardsContainer {
+    grid-template-columns: repeat(auto-fit, minmax(24rem, 1fr));
+  }
 }
 
 .options {
@@ -138,7 +142,7 @@
   }
 }
 
-.navActions{
+.navActions {
   display: flex;
   align-items: center;
   gap: 1rem;
