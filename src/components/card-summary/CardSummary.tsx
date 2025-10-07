@@ -58,7 +58,7 @@ const CardSummary: React.FC<CardSummaryProps> = ({
             autoFocus
             className="flex flex-col  min-h-[10rem] gap-2 mb-4 text-[1.4rem] font-medium outline-none cursor-text"
           >
-            {selected?.answer}
+            <div> {selected?.answer}</div>
           </div>
         </div>
       </div>

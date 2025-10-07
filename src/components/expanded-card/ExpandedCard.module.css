@@ -88,7 +88,7 @@
 
 .cardsContainer {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(24rem, 24rem));
+  grid-template-columns: repeat(auto-fit, minmax(24rem, 28rem));
   gap: 2rem;
   width: 100%;
 }
