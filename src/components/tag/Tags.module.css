@@ -1,0 +1,13 @@
+
+.tagButton{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 10.9rem;
+    height: 3.2rem;
+    border-radius: 46px;
+    border: 1px solid #DAD7FE;
+    font-family: "DM sans";
+    transition: all 200ms ease;
+}
+

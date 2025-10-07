@@ -2,7 +2,8 @@ export interface Flashcard {
   id: number;
   question: string;
   answer: string;
-  deckId: string;
+  deckId: number;
+  tags: number[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -14,4 +15,10 @@ export interface Topic {
   flashcards: Flashcard[];
   createdAt: Date;
   updatedAt: Date;
+}
+
+export interface Tag {
+  id: number;
+  name: string;
+  color: string;
 }
