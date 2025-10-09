@@ -164,3 +164,35 @@ export const topicTags: Tag[] = [
     color: "#F84AA7",
   },
 ];
+
+// there a few types of blocks (paragraph, heading, list, code block)
+
+
+/*
+
+const paragraph = {
+  type: "paragraph",
+  element: "p",
+  position: 0, // to make it draggable
+  content: [
+    {
+      type: "text",
+      text: "this is a simple paragraph",
+      style: "",
+      attributes: [
+        {
+          type: "bold",
+        },
+        {
+          type: "italic",
+        },
+        {
+          type: "strike",
+        },
+      ],
+    },
+  ],
+};
+
+
+*/

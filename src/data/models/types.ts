@@ -22,3 +22,25 @@ export interface Tag {
   name: string;
   color: string;
 }
+
+
+/* :::::::::::::::::::::::::::::::::::::::: */
+
+export type Attribute = {
+  type: "bold" | "italic" | "strike" | string;
+};
+
+export type Content = {
+  type: "text" | string;
+  text: string;
+  style: string;
+  attributes: Attribute[];
+};
+
+export type Block = {
+  id: number;
+  type: "paragraph" | string;
+  element: string;
+  position: number;
+  content: Content[];
+};
