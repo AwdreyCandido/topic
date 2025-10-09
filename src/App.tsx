@@ -7,8 +7,8 @@ import { sampleDeck } from "./data/data";
 function App() {
   return (
     <CardProvider>
-      {/* <Home /> */}
-      <CardSummary selectedCard={sampleDeck[0].flashcards[0]} selectedTopicId={1}/>
+      <Home />
+      {/* <CardSummary selectedCard={sampleDeck[0].flashcards[0]} selectedTopicId={1}/> */}
     </CardProvider>
   );
 }

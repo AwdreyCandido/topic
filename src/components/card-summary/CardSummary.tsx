@@ -1,9 +1,11 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { HiOutlineDocumentText } from "react-icons/hi2";
+import { HiOutlineDocumentText, HiOutlinePlusSmall } from "react-icons/hi2";
 import { HiMiniXMark } from "react-icons/hi2";
 import { useCardContext } from "../../data/contexts/CardsContext";
 import { blocks } from "../../data/blocks";
 import { Block } from "../../data/models/types";
+import styles from "./CardSummary.module.css";
+import { RiDraggable } from "react-icons/ri";
 
 interface CardSummaryProps {
   selectedCard?: any;
@@ -14,11 +16,13 @@ const CardSummary: React.FC<CardSummaryProps> = ({
   selectedCard,
   selectedTopicId,
 }) => {
-  const [selectedLine, setSelectedLine] = useState<any>(0);
+  const [selectedLine, setSelectedLine] = useState<number>(0);
+  const [blockId, setblockId] = useState<number>(0);
   const [lastAddedId, setLastAddedId] = useState<number | null>(null);
   const [card, setCard] = useState<any | null>(null);
   const [rows, setRows] = useState<Block[]>(blocks);
   const rowsRef = useRef(null);
+  const lineRef = useRef(0);
 
   const { selectedCardId, deckList, selectCard, selectedTopic } =
     useCardContext();
@@ -31,7 +35,8 @@ const CardSummary: React.FC<CardSummaryProps> = ({
   useLayoutEffect(() => {
     // const selected: cardModel = cards[selectedCard];
     setCard(selectedCard); // n apagar
-
+    console.log(rowsRef);
+    console.log(rows);
     if (lastAddedId) {
       focusRow(lastAddedId);
     }
@@ -40,7 +45,7 @@ const CardSummary: React.FC<CardSummaryProps> = ({
   function handleAddLine(e: React.KeyboardEvent): void {
     if (e.key === "Enter") {
       e.preventDefault();
-      const newPosition = selectedLine + 1;
+      const newPosition = lineRef.current + 1;
       const newContent = [...rows];
       const newId = Math.random() + new Date().getUTCMilliseconds();
       const newBlock = {
@@ -76,30 +81,68 @@ const CardSummary: React.FC<CardSummaryProps> = ({
   function focusRow(id: number) {
     const map = getMap();
     const node = map.get(id);
-    node.current.focus();
 
     const editable: HTMLElement = node.current.querySelector("[data-block-id]");
     if (editable) {
-      console.log('editable', editable.getAttribute("data-block-position"))
-      
+      console.log("editable", editable.getAttribute("data-block-position"));
+
+      editable.focus();
       const range = document.createRange();
       const sel = window.getSelection();
+      const position = editable.getAttribute("data-block-position");
       range.selectNodeContents(editable);
       range.collapse(false); // place cursor at end
       sel?.removeAllRanges();
       sel?.addRange(range);
-      setSelectedLine(editable.getAttribute("data-block-position"))
+      setSelectedLine(Number(position));
+      lineRef.current = Number(position);
+    }
+  }
+
+  function handleKeyEvent(e: React.KeyboardEvent) {
+    if (e.key === "Enter") {
+      handleAddLine(e);
+      return;
+    }
+
+    if (["ArrowDown", "ArrowUp"].includes(e.key)) {
+      requestAnimationFrame(() => {
+        const sel = window.getSelection();
+        if (!sel || sel.rangeCount === 0) return;
+
+        const commonAncestor = sel.getRangeAt(0).commonAncestorContainer;
+        let position: string | null | unknown = null;
+
+        if (commonAncestor?.nodeType === Node.TEXT_NODE) {
+          position = commonAncestor?.parentElement?.getAttribute(
+            "data-block-position"
+          );
+        } else if (commonAncestor?.nodeType === Node.ELEMENT_NODE) {
+          position = (commonAncestor as Element)?.getAttribute(
+            "data-block-position"
+          );
+        }
+
+        if (position !== null) {
+          const newPosition = Number(position);
+          lineRef.current = newPosition;
+          setSelectedLine(newPosition);
+          console.log(newPosition, lineRef.current);
+        }
+      });
     }
   }
 
   return (
     <section
-      style={{ width: card ? "60vw" : "0px" }}
-      className={`duration-300 font-figtree text-neutral-800 ${
+      style={{ width: card ? "60vw" : "0px", maxWidth: "60vw" }}
+      className={`max-w-[60vw] duration-300 font-figtree text-neutral-800 ${
         card ? "border-l-[.1rem] border-black-5" : ""
       }`}
     >
-      <div className={`overflow-y-auto h-full ${card ? "p-14" : "hidden"}`}>
+      <div
+        className={`overflow-y-auto h-full ${card ? "px-[60px] py-14" : "hidden"}`}
+      >
         <div className="flex items-center justify-between pb-8 border-b-[1px] border-b-neutral-300 ">
           <div className="flex  items-center gap-2">
             <HiOutlineDocumentText className="text-[2.5rem] stroke-[1.4]" />
@@ -122,8 +165,8 @@ const CardSummary: React.FC<CardSummaryProps> = ({
             contentEditable="true"
             suppressContentEditableWarning
             autoFocus
-            onKeyDown={(e) => handleAddLine(e)}
-            className="flex flex-col min-h-[10rem] gap-2 mb-4 text-[1.4rem] font-medium outline-none cursor-text"
+            onKeyDown={(e) => handleKeyEvent(e)}
+            className="flex flex-col min-h-[10rem] gap-2 mb-4 text-[1.6rem] font-medium outline-none cursor-text"
           >
             <div> {selected?.answer}</div>
             <div>
@@ -131,8 +174,20 @@ const CardSummary: React.FC<CardSummaryProps> = ({
                 const Element = block.element as keyof JSX.IntrinsicElements;
 
                 return (
-                  <div key={index} data-block-type="outer-block">
-                    <div data-block-type="container-block">
+                  <div
+                    className={styles.line}
+                    key={index}
+                    data-block-type="outer-block"
+                  >
+                    <div className={styles.icons}>
+                      <div className={styles.icon}>
+                        <HiOutlinePlusSmall />
+                      </div>
+                      <div className={styles.icon}>
+                        <RiDraggable />
+                      </div>
+                    </div>
+                    <div data-block-type="container-block" className="w-full">
                       {block.content.map((item) => {
                         return (
                           <div
@@ -146,12 +201,16 @@ const CardSummary: React.FC<CardSummaryProps> = ({
                             data-block-line={block.position}
                             data-content-type={block.type}
                             data-content-element={block.element}
-                            onClick={() => setSelectedLine(block.position)}
+                            onClick={() => {
+                              console.log(lineRef, block.position);
+                              setSelectedLine(block.position);
+                              lineRef.current = block.position;
+                            }}
                             tabIndex={-1}
                             className="focus:outline-none"
                           >
                             <Element
-                              className="min-h-[2.2rem] bg-blue-200 my-1"
+                              className="min-h-[2.2rem]"
                               data-block-id={block.id}
                               data-content-type={item.type}
                               data-block-position={block.position}
