@@ -84,6 +84,7 @@
   place-items: start;
   justify-content: center;
   overflow-y: auto;
+  cursor: default;
 }
 
 .cardsContainer {

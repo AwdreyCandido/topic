@@ -32,6 +32,7 @@ export type Attribute = {
 
 export type Content = {
   type: "text" | string;
+  element?: string;
   text: string;
   style: string;
   attributes: Attribute[];

@@ -11,6 +11,7 @@
   border: 1.5px solid #525252;
   width: 100%;
   max-width: none;
+  cursor: pointer;
 }
 
 @container cards (width < 100rem) {

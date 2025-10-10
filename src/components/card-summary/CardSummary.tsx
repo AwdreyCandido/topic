@@ -1,4 +1,10 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import React, {
+  JSX,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import { HiOutlineDocumentText, HiOutlinePlusSmall } from "react-icons/hi2";
 import { HiMiniXMark } from "react-icons/hi2";
 import { useCardContext } from "../../data/contexts/CardsContext";
@@ -6,6 +12,8 @@ import { blocks } from "../../data/blocks";
 import { Block } from "../../data/models/types";
 import styles from "./CardSummary.module.css";
 import { RiDraggable } from "react-icons/ri";
+
+const listElements = ["ol", "ul", "dl"];
 
 interface CardSummaryProps {
   selectedCard?: any;
@@ -21,8 +29,9 @@ const CardSummary: React.FC<CardSummaryProps> = ({
   const [lastAddedId, setLastAddedId] = useState<number | null>(null);
   const [card, setCard] = useState<any | null>(null);
   const [rows, setRows] = useState<Block[]>(blocks);
-  const rowsRef = useRef(null);
-  const lineRef = useRef(0);
+  const rowsRef =
+    useRef<React.RefObject<Map<number, { current: HTMLElement }>>>(null);
+  const lineRef = useRef<number>(0);
 
   const { selectedCardId, deckList, selectCard, selectedTopic } =
     useCardContext();
@@ -80,7 +89,7 @@ const CardSummary: React.FC<CardSummaryProps> = ({
 
   function focusRow(id: number) {
     const map = getMap();
-    const node = map.get(id);
+    const node = map?.get(id);
 
     const editable: HTMLElement = node.current.querySelector("[data-block-id]");
     if (editable) {
@@ -133,15 +142,22 @@ const CardSummary: React.FC<CardSummaryProps> = ({
     }
   }
 
+  function handleSelectedLine(position: number) {
+    setSelectedLine(position);
+  }
+
   return (
     <section
+      suppressContentEditableWarning
       style={{ width: card ? "60vw" : "0px", maxWidth: "60vw" }}
       className={`max-w-[60vw] duration-300 font-figtree text-neutral-800 ${
         card ? "border-l-[.1rem] border-black-5" : ""
       }`}
     >
       <div
-        className={`overflow-y-auto h-full ${card ? "px-[60px] py-14" : "hidden"}`}
+        className={`overflow-y-auto h-full ${
+          card ? "px-[60px] py-14" : "hidden"
+        }`}
       >
         <div className="flex items-center justify-between pb-8 border-b-[1px] border-b-neutral-300 ">
           <div className="flex  items-center gap-2">
@@ -171,57 +187,14 @@ const CardSummary: React.FC<CardSummaryProps> = ({
             <div> {selected?.answer}</div>
             <div>
               {rows?.map((block, index) => {
-                const Element = block.element as keyof JSX.IntrinsicElements;
-
                 return (
-                  <div
-                    className={styles.line}
+                  <CustomBlockElement
                     key={index}
-                    data-block-type="outer-block"
-                  >
-                    <div className={styles.icons}>
-                      <div className={styles.icon}>
-                        <HiOutlinePlusSmall />
-                      </div>
-                      <div className={styles.icon}>
-                        <RiDraggable />
-                      </div>
-                    </div>
-                    <div data-block-type="container-block" className="w-full">
-                      {block.content.map((item) => {
-                        return (
-                          <div
-                            key={block.id}
-                            ref={(node) => {
-                              const map = getMap();
-                              if (node) map.set(block.id, { current: node });
-                              else map.delete(block.id);
-                            }}
-                            data-block-type="content-block"
-                            data-block-line={block.position}
-                            data-content-type={block.type}
-                            data-content-element={block.element}
-                            onClick={() => {
-                              console.log(lineRef, block.position);
-                              setSelectedLine(block.position);
-                              lineRef.current = block.position;
-                            }}
-                            tabIndex={-1}
-                            className="focus:outline-none"
-                          >
-                            <Element
-                              className="min-h-[2.2rem]"
-                              data-block-id={block.id}
-                              data-content-type={item.type}
-                              data-block-position={block.position}
-                            >
-                              {item.text}
-                            </Element>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
+                    block={block}
+                    rowsMapRef={getMap}
+                    lineIndexRef={lineRef}
+                    onSelectedLine={handleSelectedLine}
+                  />
                 );
               })}
             </div>
@@ -233,3 +206,105 @@ const CardSummary: React.FC<CardSummaryProps> = ({
 };
 
 export default CardSummary;
+
+interface CustomBlockElementProps {
+  block: Block;
+  rowsMapRef: () => Map<number, { current: HTMLElement }>;
+  lineIndexRef: React.RefObject<number>;
+  onSelectedLine: (position: number) => void;
+}
+
+const CustomBlockElement: React.FC<CustomBlockElementProps> = ({
+  block,
+  rowsMapRef,
+  lineIndexRef,
+  onSelectedLine,
+}) => {
+  const Element = block.element as keyof JSX.IntrinsicElements;
+  const isList = listElements.includes(block.element);
+
+  const handleRef = (node: HTMLElement | null) => {
+    const map = rowsMapRef();
+    if (node) map.set(block.id, { current: node });
+    else map.delete(block.id);
+  };
+
+  const handleSelect = () => {
+    console.log(lineIndexRef, block.position);
+    onSelectedLine(block.position);
+    lineIndexRef.current = block.position;
+  };
+
+  const renderCommonBlock = () =>
+    block.content.map((item) => (
+      <div
+        key={block.id}
+        tabIndex={-1}
+        ref={handleRef}
+        data-block-type="content-block"
+        data-block-line={block.position}
+        data-content-type={block.type}
+        data-content-element={block.element}
+        onClick={handleSelect}
+        className="focus:outline-none"
+      >
+        <Element
+          className="min-h-[2.2rem]"
+          data-block-id={block.id}
+          data-content-type={item.type}
+          data-block-position={block.position}
+        >
+          {item.text}
+        </Element>
+      </div>
+    ));
+
+  const renderListBlock = () => (
+    <div
+      key={block.id}
+      tabIndex={-1}
+      data-block-type="content-block"
+      data-block-line={block.position}
+      data-content-type={block.type}
+      data-content-element={block.element}
+    >
+      <div
+        ref={handleRef}
+        onClick={handleSelect}
+        className="focus:outline-none"
+      >
+        <Element>
+          {block.content.map((item) => {
+            const ListElement = item.element as keyof JSX.IntrinsicElements;
+
+            return (
+              <ListElement
+                className="min-h-[2.2rem]"
+                data-block-id={block.id}
+                data-content-type={block.type}
+                data-block-position={block.position}
+              >
+                {item.text}
+              </ListElement>
+            );
+          })}
+        </Element>
+      </div>
+    </div>
+  );
+  return (
+    <div className={styles.line} data-block-type="outer-block">
+      <div className={styles.icons}>
+        <div className={styles.icon}>
+          <HiOutlinePlusSmall />
+        </div>
+        <div className={styles.icon}>
+          <RiDraggable />
+        </div>
+      </div>
+      <div data-block-type="container-block" className="w-full">
+        {isList ? renderListBlock() : renderCommonBlock()}
+      </div>
+    </div>
+  );
+};
